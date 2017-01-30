@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <artifactId>jms</artifactId>
+        <groupId>com.mtsmda.jms</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.mtsmda.jms</groupId>
+    <artifactId>weblogic-jms</artifactId>
+    <packaging>war</packaging>
+    <name>JMS - weblogic-jms Maven Webapp</name>
+
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <weblogic.install.path>D:\work\tools\servers_and_web_containers\webLogic\wl12c\wlserver\</weblogic.install.path>
+    </properties>
+
+    <dependencies>
+        <!--jms-->
+        <dependency>
+            <groupId>${javax.jms.groupId}</groupId>
+            <artifactId>jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${javax.jms.groupId}</groupId>
+            <artifactId>javax.jms-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bea.weblogic</groupId>
+            <artifactId>wlclient</artifactId>
+            <version>12.0.3</version>
+            <scope>system</scope>
+            <systemPath>${weblogic.install.path}server\lib\wlclient.jar
+            </systemPath>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>weblogic-jms</finalName>
+    </build>
+</project>
