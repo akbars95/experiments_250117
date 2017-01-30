@@ -10,8 +10,6 @@ import javax.naming.InitialContext;
  */
 public class QueueReceive extends ConnectionToWeblogic implements MessageListener {
 
-    private boolean quit = false;
-
     public static void main(String[] args) {
         System.out.println("start");
         String url = null;//args[0];

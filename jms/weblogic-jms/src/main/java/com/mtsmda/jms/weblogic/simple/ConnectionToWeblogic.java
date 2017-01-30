@@ -4,8 +4,6 @@ import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Hashtable;
 
 /**
@@ -16,6 +14,7 @@ public class ConnectionToWeblogic {
     public static final String JNDI_FACTORY = "weblogic.jndi.WLInitialContextFactory";
     public static final String JMS_FACTORY = "jms/TestConnectionFactory";
     public static final String QUEUE = "jms/TestQueue";
+    public static final String TOPIC = "jms/TestTopic";
 
     protected QueueConnectionFactory queueConnectionFactory;
     protected QueueConnection queueConnection;
@@ -24,6 +23,15 @@ public class ConnectionToWeblogic {
     protected QueueReceiver queueReceiver;
     protected Queue queue;
     protected TextMessage textMessage;
+
+    protected TopicConnectionFactory topicConnectionFactory;
+    protected TopicConnection topicConnection;
+    protected TopicSession topicSession;
+    protected TopicPublisher topicPublisher;
+    protected TopicSubscriber topicSubscriber;
+    protected Topic topic;
+
+    protected boolean quit = false;
 
     public void init(Context context, String queueName, MessageListener messageListener) {
         try {
@@ -44,6 +52,25 @@ public class ConnectionToWeblogic {
         }
     }
 
+    public void initTopic(Context context, String topicName, MessageListener messageListener) {
+        try {
+            topicConnectionFactory = (TopicConnectionFactory) context.lookup(JMS_FACTORY);
+            topicConnection = topicConnectionFactory.createTopicConnection();
+            topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+            topic = (Topic) context.lookup(topicName);
+            if (null == messageListener) {
+                topicPublisher = topicSession.createPublisher(topic);
+                textMessage = topicSession.createTextMessage();
+            } else {
+                topicSubscriber = topicSession.createSubscriber(topic);
+                topicSubscriber.setMessageListener(messageListener);
+            }
+            topicConnection.start();
+        } catch (NamingException | JMSException e) {
+            System.out.println(e.getMessage() + " _ " + e);
+        }
+    }
+
     protected static InitialContext getInitialContext(String url) {
         try {
             Hashtable hashtable = new Hashtable<>();
@@ -58,16 +85,35 @@ public class ConnectionToWeblogic {
 
     public void close() {
         try {
-            if (null == queueSender) {
+            if (!isNull(topicPublisher)) {
+                topicPublisher.close();
+            }
+            if (!isNull(topicConnection)) {
+                topicConnection.close();
+            }
+            if (!isNull(topicSession)) {
+                topicSession.close();
+            }
+
+            if (!isNull(queueSender)) {
                 queueReceiver.close();
-            } else {
+            }
+            if (!isNull(queueSender)) {
                 queueSender.close();
             }
-            queueSession.close();
-            queueConnection.close();
+            if (!isNull(queueSession)) {
+                queueSession.close();
+            }
+            if (!isNull(queueConnection)) {
+                queueConnection.close();
+            }
         } catch (JMSException e) {
             e.printStackTrace();
         }
+    }
+
+    private <T> boolean isNull(T object) {
+        return null == object;
     }
 
 }
