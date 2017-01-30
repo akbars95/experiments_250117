@@ -1,0 +1,2 @@
+run weblogic server - startWebLogic.cmd
+http://localhost:7001/console
