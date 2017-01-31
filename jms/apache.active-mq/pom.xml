@@ -9,7 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>JMS - Apache Active MQ</name>
+
     <artifactId>apache.active-mq</artifactId>
 
+    <dependencies>
+        <!--apache activemq-->
+        <dependency>
+            <groupId>${org.apache.activemq.groupId}</groupId>
+            <artifactId>${activemq.artifactId}-all</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

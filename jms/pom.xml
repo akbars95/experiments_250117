@@ -33,6 +33,12 @@
                 <artifactId>javax.jms-api</artifactId>
                 <version>${javax.jms-api.version}</version>
             </dependency>
+            <!--apache activemq-->
+            <dependency>
+                <groupId>${org.apache.activemq.groupId}</groupId>
+                <artifactId>${activemq.artifactId}-all</artifactId>
+                <version>${activemq-all.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
