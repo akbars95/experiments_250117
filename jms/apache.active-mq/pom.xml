@@ -19,6 +19,13 @@
             <groupId>${org.apache.activemq.groupId}</groupId>
             <artifactId>${activemq.artifactId}-all</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.mtsmda.jms</groupId>
+            <artifactId>common</artifactId>
+            <version>${version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>

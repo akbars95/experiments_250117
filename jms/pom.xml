@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <name>JMS - Root Project</name>
     <modules>
+        <module>common</module>
         <module>weblogic-jms</module>
         <module>apache.active-mq</module>
     </modules>
