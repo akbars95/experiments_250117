@@ -1,10 +1,12 @@
 package com.mtsmda.apache.activemq;
 
+import com.mtsmda.apache.activemq.domain.FootballClub;
 import com.mtsmda.jms.common.ExceptionHandler;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -19,20 +21,29 @@ public class CommonConnectionToActiveMQ {
     private MessageProducer messageProducer;
     private MessageConsumer messageConsumer;
 
-    static {
-        try {
-            connectionFactory = new ActiveMQConnectionFactory(ActiveMQConnectionFactory.DEFAULT_BROKER_URL);
-            connection = connectionFactory.createConnection();
-            connection.start();
-        } catch (Exception e) {
-            System.out.println(ExceptionHandler.toString(e));
+
+    private static Connection getConnection() {
+        if (null == connection) {
+            try {
+                connectionFactory = new ActiveMQConnectionFactory(ActiveMQConnectionFactory.DEFAULT_BROKER_URL);
+                connection = connectionFactory.createConnection();
+                connection.start();
+            } catch (Exception e) {
+                System.out.println(ExceptionHandler.toString(e));
+            }
         }
+        return connection;
     }
 
-    public Session getSession(String queueName, boolean isProducer) {
+    public Session openSession(String queueOrTopicName, boolean isProducer, boolean isTopic) {
         try {
-            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            destination = session.createQueue(queueName);
+            session = getConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
+            if (isTopic) {
+                destination = session.createTopic(queueOrTopicName);
+            } else {
+                destination = session.createQueue(queueOrTopicName);
+            }
+
             if (isProducer) {
                 messageProducer = session.createProducer(destination);
             } else {
@@ -62,6 +73,20 @@ public class CommonConnectionToActiveMQ {
             } else {
                 throw new RuntimeException("This message not TextMessage type! Current is " + receive.getClass().getCanonicalName());
             }
+        } catch (Exception e) {
+            System.out.println(ExceptionHandler.toString(e));
+        }
+    }
+
+    public void receiveTextMessageWithListener() {
+        try {
+            messageConsumer.setMessageListener(message -> {
+                try {
+                    System.out.println("Received - " + ((TextMessage) message).getText() + " ldt - " + LocalDateTime.now());
+                } catch (Exception e) {
+                    System.out.println(ExceptionHandler.toString(e));
+                }
+            });
         } catch (Exception e) {
             System.out.println(ExceptionHandler.toString(e));
         }

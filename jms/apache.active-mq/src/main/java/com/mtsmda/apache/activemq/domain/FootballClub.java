@@ -1,4 +1,4 @@
-package com.mtsmda.apache.activemq;
+package com.mtsmda.apache.activemq.domain;
 
 import java.io.Serializable;
 
