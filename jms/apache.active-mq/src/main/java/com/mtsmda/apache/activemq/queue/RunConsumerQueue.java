@@ -9,7 +9,7 @@ public class RunConsumerQueue {
 
     public static void main(String[] args) {
         CommonConnectionToActiveMQ commonConnectionToActiveMQ = new CommonConnectionToActiveMQ();
-        commonConnectionToActiveMQ.openSession("FirstTextMessage", false, false);
+        commonConnectionToActiveMQ.openSession("FirstTextMessage", false, false, "Consumer");
         /*while (true){
             commonConnectionToActiveMQ.receiveTextMessage();
         }*/

@@ -14,7 +14,7 @@ public class RunProducerQueue {
 
     public static void main(String[] args) {
         CommonConnectionToActiveMQ commonConnectionToActiveMQ = new CommonConnectionToActiveMQ();
-        commonConnectionToActiveMQ.openSession("FirstTextMessage", true, false);
+        commonConnectionToActiveMQ.openSession("FirstTextMessage", true, false, "Producer1");
 
         System.out.print("Enter message(write 'quit' or shortcut 'q' for exit):\n");
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in))) {
@@ -25,11 +25,11 @@ public class RunProducerQueue {
                 if (null != line && !line.trim().isEmpty()) {
                     quitNow = line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("q");
                 }
-                if(!quitNow){
+                if (!quitNow) {
                     line += " ldt - " + LocalDateTime.now();
-                    System.out.println("Send - "+ line);
+                    System.out.println("Send - " + line);
                     commonConnectionToActiveMQ.sendTextMessage(line);
-                }else{
+                } else {
                     System.out.println("SEE YOU SOON!");
                 }
             }

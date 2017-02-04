@@ -43,5 +43,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <!--commons-->
+        <dependency>
+            <groupId>${org.apache.commons.groupId}</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

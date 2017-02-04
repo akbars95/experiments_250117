@@ -9,7 +9,7 @@ public class RunConsumerTopic2 {
 
     public static void main(String[] args) {
         CommonConnectionToActiveMQ commonConnectionToActiveMQ = new CommonConnectionToActiveMQ();
-        commonConnectionToActiveMQ.openSession("FirstTextMessageTopic", false, true);
+        commonConnectionToActiveMQ.openSession("FirstTextMessageTopic", false, true, "Cons1");
         commonConnectionToActiveMQ.receiveTextMessageWithListener();
 
     }

@@ -3,11 +3,13 @@ package com.mtsmda.apache.activemq;
 import com.mtsmda.apache.activemq.domain.FootballClub;
 import com.mtsmda.jms.common.ExceptionHandler;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.jms.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by dminzat on 1/30/2017.
@@ -21,12 +23,18 @@ public class CommonConnectionToActiveMQ {
     private MessageProducer messageProducer;
     private MessageConsumer messageConsumer;
 
+    private static int clientId = 0;
 
-    private static Connection getConnection() {
+    private static Connection getConnection(String clientName) {
         if (null == connection) {
             try {
                 connectionFactory = new ActiveMQConnectionFactory(ActiveMQConnectionFactory.DEFAULT_BROKER_URL);
                 connection = connectionFactory.createConnection();
+                if (StringUtils.isNotBlank(clientName)) {
+                    connection.setClientID(clientName);
+                } else {
+                    connection.setClientID("Client_" + UUID.randomUUID());
+                }
                 connection.start();
             } catch (Exception e) {
                 System.out.println(ExceptionHandler.toString(e));
@@ -35,9 +43,9 @@ public class CommonConnectionToActiveMQ {
         return connection;
     }
 
-    public Session openSession(String queueOrTopicName, boolean isProducer, boolean isTopic) {
+    public Session openSession(String queueOrTopicName, boolean isProducer, boolean isTopic, String clientName) {
         try {
-            session = getConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
+            session = getConnection(clientName).createSession(false, Session.AUTO_ACKNOWLEDGE);
             if (isTopic) {
                 destination = session.createTopic(queueOrTopicName);
             } else {
