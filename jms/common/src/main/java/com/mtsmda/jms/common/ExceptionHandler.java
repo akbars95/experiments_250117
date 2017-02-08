@@ -9,4 +9,8 @@ public class ExceptionHandler {
         return "Class - " + tException.getClass().getCanonicalName() + ", message - " + tException.getMessage()
                 + ", exception - " + tException.toString();
     }
+
+    public static <T extends Exception> void toStringOut(T tException) {
+        System.out.println(toString(tException));
+    }
 }
