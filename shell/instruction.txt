@@ -1,0 +1,6 @@
+create file with extenshion .sh
+insert:
+		#!/usr/bin/env bash
+		echo 'Hello World!'
+give right - chmod +rx scriptname
+run - bash scriptname
