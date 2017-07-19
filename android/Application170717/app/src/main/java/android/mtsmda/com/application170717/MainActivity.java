@@ -1,6 +1,7 @@
 package android.mtsmda.com.application170717;
 
 import android.content.Context;
+import android.mtsmda.com.application170717.activity.MyAppCompatActivity;
 import android.mtsmda.com.application170717.helper.ListHelper;
 import android.mtsmda.com.application170717.model.Question;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +13,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends MyAppCompatActivity {
 
     private Button mTrueButton;
     private Button mFalseButton;
@@ -35,20 +36,43 @@ public class MainActivity extends AppCompatActivity {
         this.mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, R.string.correct_toast, Toast.LENGTH_LONG).show();
+                checkAnswer(true);
             }
         });
         this.mFalseButton = findViewById(R.id.false_button, Button.class);
         this.mFalseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, R.string.incorrect_toast, Toast.LENGTH_LONG).show();
+                checkAnswer(false);
+            }
+        });
+
+        this.mQuestionTextView = findViewById(R.id.question_text_view, TextView.class);
+        updateQuestion();
+
+        this.mNextButton = findViewById(R.id.next_button, Button.class);
+        this.mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size();
+                updateQuestion();
             }
         });
     }
 
-    private <T> T findViewById(int id, Class<T> returnType) {
-        return (T) super.findViewById(id);
+    private void checkAnswer(boolean userPressedTrue) {
+        boolean answerIsTrue = mQuestionBank.get(mCurrentIndex).isAnswerTrue();
+        int messageResId;
+        if (userPressedTrue == answerIsTrue) {
+            messageResId = R.string.correct_toast;
+        } else {
+            messageResId = R.string.incorrect_toast;
+        }
+        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateQuestion() {
+        this.mQuestionTextView.setText(mQuestionBank.get(mCurrentIndex).getTextResId());
     }
 
 }
