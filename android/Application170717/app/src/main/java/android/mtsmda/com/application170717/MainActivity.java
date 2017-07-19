@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,8 +18,8 @@ public class MainActivity extends MyAppCompatActivity {
 
     private Button mTrueButton;
     private Button mFalseButton;
-    private Button mPreviousButton;
-    private Button mNextButton;
+    private ImageButton mPreviousButton;
+    private ImageButton mNextButton;
     private TextView mQuestionTextView;
 
     private List<Question> mQuestionBank = ListHelper.getList(new Question(R.string.question_africa, false),
@@ -51,7 +52,7 @@ public class MainActivity extends MyAppCompatActivity {
         this.mQuestionTextView = findViewById(R.id.question_text_view, TextView.class);
         updateQuestion();
 
-        this.mNextButton = findViewById(R.id.next_button, Button.class);
+        this.mNextButton = findViewById(R.id.next_button, ImageButton.class);
         this.mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,7 +61,7 @@ public class MainActivity extends MyAppCompatActivity {
             }
         });
 
-        this.mPreviousButton = findViewById(R.id.previous_button, Button.class);
+        this.mPreviousButton = findViewById(R.id.previous_button, ImageButton.class);
         this.mPreviousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
