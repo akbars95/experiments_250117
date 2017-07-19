@@ -17,6 +17,7 @@ public class MainActivity extends MyAppCompatActivity {
 
     private Button mTrueButton;
     private Button mFalseButton;
+    private Button mPreviousButton;
     private Button mNextButton;
     private TextView mQuestionTextView;
 
@@ -55,6 +56,21 @@ public class MainActivity extends MyAppCompatActivity {
             @Override
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size();
+                updateQuestion();
+            }
+        });
+
+        this.mPreviousButton = findViewById(R.id.previous_button, Button.class);
+        this.mPreviousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentIndex--;
+                if(mCurrentIndex < 0){
+                    mCurrentIndex = mQuestionBank.size() - 1;
+                }else{
+                    mCurrentIndex = mCurrentIndex % mQuestionBank.size();
+                }
+
                 updateQuestion();
             }
         });
