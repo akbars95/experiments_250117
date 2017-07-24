@@ -6,6 +6,7 @@ import android.mtsmda.com.application170717.helper.ListHelper;
 import android.mtsmda.com.application170717.model.Question;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -46,7 +47,6 @@ public class MainActivity extends MyAppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate called");
         setContentView(R.layout.activity_main);
-
         if(null != savedInstanceState){
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
         }
