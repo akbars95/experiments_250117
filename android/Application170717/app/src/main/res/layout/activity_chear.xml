@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context="android.mtsmda.com.application170717.activity.ChearActivity">
+    tools:context="android.mtsmda.com.application170717.activity.CheatActivity">
 
     <TextView
         android:layout_width="wrap_content"

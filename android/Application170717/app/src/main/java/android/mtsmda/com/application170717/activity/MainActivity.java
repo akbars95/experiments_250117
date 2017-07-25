@@ -1,12 +1,10 @@
-package android.mtsmda.com.application170717;
+package android.mtsmda.com.application170717.activity;
 
-import android.content.Context;
-import android.mtsmda.com.application170717.activity.MyAppCompatActivity;
+import android.content.Intent;
+import android.mtsmda.com.application170717.R;
 import android.mtsmda.com.application170717.helper.ListHelper;
 import android.mtsmda.com.application170717.model.Question;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,15 +13,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
-import java.util.Objects;
 
 public class MainActivity extends MyAppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String KEY_INDEX = "index";
+    private static final int REQUEST_CODE_CHEAT = 0;
 
     private Button mTrueButton;
     private Button mFalseButton;
+    private Button mCheatButton;
     private ImageButton mPreviousButton;
     private ImageButton mNextButton;
     private TextView mQuestionTextView;
@@ -90,6 +89,14 @@ public class MainActivity extends MyAppCompatActivity {
                 }
 
                 updateQuestion();
+            }
+        });
+
+        this.mCheatButton = findViewById(R.id.cheat_button, Button.class);
+        this.mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(CheatActivity.newIntent(MainActivity.this, mQuestionBank.get(mCurrentIndex).isAnswerTrue()));
             }
         });
     }
