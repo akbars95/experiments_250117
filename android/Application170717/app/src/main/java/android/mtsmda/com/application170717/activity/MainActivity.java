@@ -1,5 +1,6 @@
 package android.mtsmda.com.application170717.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.mtsmda.com.application170717.R;
 import android.mtsmda.com.application170717.helper.ListHelper;
@@ -27,6 +28,8 @@ public class MainActivity extends MyAppCompatActivity {
     private ImageButton mNextButton;
     private TextView mQuestionTextView;
 
+    private boolean mIsCheater;
+
     private List<Question> mQuestionBank = ListHelper.getList(new Question(R.string.question_africa, false),
             new Question(R.string.question_americas, true), new Question(R.string.question_asia, true),
             new Question(R.string.question_australia, true), new Question(R.string.question_mideast, false),
@@ -39,6 +42,19 @@ public class MainActivity extends MyAppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState");
         outState.putInt(KEY_INDEX, mCurrentIndex);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode != Activity.RESULT_OK){
+            return;
+        }
+        if(requestCode == REQUEST_CODE_CHEAT){
+            if(data == null){
+                return;
+            }
+            mIsCheater = CheatActivity.wasAnswerShown(data);
+        }
     }
 
     @Override
@@ -73,6 +89,7 @@ public class MainActivity extends MyAppCompatActivity {
             @Override
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size();
+                mIsCheater = false;
                 updateQuestion();
             }
         });
@@ -81,13 +98,13 @@ public class MainActivity extends MyAppCompatActivity {
         this.mPreviousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mIsCheater = false;
                 mCurrentIndex--;
                 if(mCurrentIndex < 0){
                     mCurrentIndex = mQuestionBank.size() - 1;
                 }else{
                     mCurrentIndex = mCurrentIndex % mQuestionBank.size();
                 }
-
                 updateQuestion();
             }
         });
@@ -96,7 +113,7 @@ public class MainActivity extends MyAppCompatActivity {
         this.mCheatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(CheatActivity.newIntent(MainActivity.this, mQuestionBank.get(mCurrentIndex).isAnswerTrue()));
+                startActivityForResult(CheatActivity.newIntent(MainActivity.this, mQuestionBank.get(mCurrentIndex).isAnswerTrue()), REQUEST_CODE_CHEAT);
             }
         });
     }
@@ -134,10 +151,14 @@ public class MainActivity extends MyAppCompatActivity {
     private void checkAnswer(boolean userPressedTrue) {
         boolean answerIsTrue = mQuestionBank.get(mCurrentIndex).isAnswerTrue();
         int messageResId;
-        if (userPressedTrue == answerIsTrue) {
-            messageResId = R.string.correct_toast;
-        } else {
-            messageResId = R.string.incorrect_toast;
+        if(mIsCheater){
+            messageResId = R.string.judgment_toast;
+        }else{
+            if (userPressedTrue == answerIsTrue) {
+                messageResId = R.string.correct_toast;
+            } else {
+                messageResId = R.string.incorrect_toast;
+            }
         }
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
     }
