@@ -27,15 +27,16 @@ public class MainActivity extends MyAppCompatActivity {
     private ImageButton mPreviousButton;
     private ImageButton mNextButton;
     private TextView mQuestionTextView;
-
-    private boolean mIsCheater;
+    private TextView mCheatCountTextView;
 
     private List<Question> mQuestionBank = ListHelper.getList(new Question(R.string.question_africa, false),
             new Question(R.string.question_americas, true), new Question(R.string.question_asia, true),
             new Question(R.string.question_australia, true), new Question(R.string.question_mideast, false),
             new Question(R.string.question_oceans, true));
 
+    private boolean mIsCheater;
     private int mCurrentIndex = 0;
+    private int mCheatCount = 3;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -46,11 +47,14 @@ public class MainActivity extends MyAppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode != Activity.RESULT_OK){
+        Log.i(TAG, String.format("onActivityResult(requestCode = %s, resultCode = %s)", requestCode, resultCode));
+        if (resultCode != Activity.RESULT_OK) {
+            Log.i(TAG, "not Activity.RESULT_OK");
             return;
         }
-        if(requestCode == REQUEST_CODE_CHEAT){
-            if(data == null){
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            Log.i(TAG, "requestCode = REQUEST_CODE_CHEAT");
+            if (data == null) {
                 return;
             }
             mIsCheater = CheatActivity.wasAnswerShown(data);
@@ -62,7 +66,7 @@ public class MainActivity extends MyAppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate called");
         setContentView(R.layout.activity_main);
-        if(null != savedInstanceState){
+        if (null != savedInstanceState) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
         }
 
@@ -100,9 +104,9 @@ public class MainActivity extends MyAppCompatActivity {
             public void onClick(View v) {
                 mIsCheater = false;
                 mCurrentIndex--;
-                if(mCurrentIndex < 0){
+                if (mCurrentIndex < 0) {
                     mCurrentIndex = mQuestionBank.size() - 1;
-                }else{
+                } else {
                     mCurrentIndex = mCurrentIndex % mQuestionBank.size();
                 }
                 updateQuestion();
@@ -113,9 +117,20 @@ public class MainActivity extends MyAppCompatActivity {
         this.mCheatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(TAG, "mCheatButton.onClick");
+                Log.i(TAG, "mCurrentIndex " + mCurrentIndex);
                 startActivityForResult(CheatActivity.newIntent(MainActivity.this, mQuestionBank.get(mCurrentIndex).isAnswerTrue()), REQUEST_CODE_CHEAT);
+                Log.i(TAG, "mCheatButton.onClick");
+                if (--mCheatCount >= 0) {
+                    mCheatCountTextView.setText("Remain count " + mCheatCount);
+                } else {
+                    mCheatButton.setEnabled(false);
+                }
             }
         });
+
+        this.mCheatCountTextView = findViewByIdTextView(R.id.cheat_count);
+        this.mCheatCountTextView.setText("Remain count " + mCheatCount);
     }
 
     @Override
@@ -151,9 +166,9 @@ public class MainActivity extends MyAppCompatActivity {
     private void checkAnswer(boolean userPressedTrue) {
         boolean answerIsTrue = mQuestionBank.get(mCurrentIndex).isAnswerTrue();
         int messageResId;
-        if(mIsCheater){
+        if (mIsCheater) {
             messageResId = R.string.judgment_toast;
-        }else{
+        } else {
             if (userPressedTrue == answerIsTrue) {
                 messageResId = R.string.correct_toast;
             } else {
