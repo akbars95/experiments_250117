@@ -50,4 +50,11 @@ public class Crime {
     public void setSolved(boolean solved) {
         mSolved = solved;
     }
+
+    public static Crime build(String title, boolean solved){
+        Crime crime = new Crime();
+        crime.setSolved(solved);
+        crime.setTitle(title);
+        return crime;
+    }
 }

@@ -20,12 +20,8 @@ public class CrimeLab {
 
     private CrimeLab(Context context) {
         this.mCrimes = new ArrayList<>();
-        for (int i = 0; i < 100; i++){
-            Crime crime = new Crime();
-            crime.setSolved(i % 2 == 0);
-            crime.setTitle("Crime #" + i);
-            crime.setDate(new Date());
-            crime.setId(UUID.randomUUID());
+        for (int i = 0; i < 100; i++) {
+            this.mCrimes.add(Crime.build("Crime #" + i, i % 2 == 0));
         }
     }
 
@@ -36,13 +32,13 @@ public class CrimeLab {
         return sCrimeLab;
     }
 
-    public List<Crime> getCrimes(){
+    public List<Crime> getCrimes() {
         return this.mCrimes;
     }
 
-    public Crime getCrime(UUID uuid){
-        for (Crime currentCrime : this.mCrimes){
-            if(currentCrime.getId().equals(uuid)){
+    public Crime getCrime(UUID uuid) {
+        for (Crime currentCrime : this.mCrimes) {
+            if (currentCrime.getId().equals(uuid)) {
                 return currentCrime;
             }
         }
