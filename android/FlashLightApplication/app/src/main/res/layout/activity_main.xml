@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:textOn="@string/flashlight_off"
         android:textOff="@string/flashlight_on"
-        android:checked="false"
         android:text="@string/flashlight_text"/>
 
 </LinearLayout>
