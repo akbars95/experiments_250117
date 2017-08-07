@@ -1,5 +1,6 @@
 package crimeintent.android.mtsmda.com.crimeintent.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import crimeintent.android.mtsmda.com.crimeintent.R;
+import crimeintent.android.mtsmda.com.crimeintent.activity.CrimeActivity;
 import crimeintent.android.mtsmda.com.crimeintent.model.Crime;
 import crimeintent.android.mtsmda.com.crimeintent.repository.CrimeLab;
 
@@ -69,7 +71,8 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+            startActivity(CrimeActivity.newIntent(getActivity(), mCrime.getId()));
         }
     }
 

@@ -14,8 +14,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.util.UUID;
+
 import crimeintent.android.mtsmda.com.crimeintent.R;
+import crimeintent.android.mtsmda.com.crimeintent.activity.CrimeActivity;
 import crimeintent.android.mtsmda.com.crimeintent.model.Crime;
+import crimeintent.android.mtsmda.com.crimeintent.repository.CrimeLab;
 
 /**
  * Created by dminzat on 7/31/2017.
@@ -32,7 +36,7 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mCrime = new Crime();
+        this.mCrime = CrimeLab.get(getActivity()).getCrime((UUID) getActivity().getIntent().getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID));
     }
 
     @Nullable
@@ -40,6 +44,7 @@ public class CrimeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_crime, container, false);
         this.mTitleEditText = (EditText) view.findViewById(R.id.crime_title);
+        this.mTitleEditText.setText(mCrime.getTitle());
         this.mTitleEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -68,6 +73,7 @@ public class CrimeFragment extends Fragment {
                 mCrime.setSolved(isChecked);
             }
         });
+        this.mSolvedCheckBox.setChecked(mCrime.isSolved());
 
         return view;
     }
