@@ -1,6 +1,7 @@
 package crimeintent.android.mtsmda.com.crimeintent.fragment;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,8 @@ import crimeintent.android.mtsmda.com.crimeintent.repository.CrimeLab;
 
 public class CrimeFragment extends Fragment {
 
+    private static final String ARG_CRIM_ID = "crime_id";
+
     private Crime mCrime;
 
     private EditText mTitleEditText;
@@ -36,7 +39,7 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mCrime = CrimeLab.get(getActivity()).getCrime((UUID) getActivity().getIntent().getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID));
+        this.mCrime = CrimeLab.get(getActivity()).getCrime((UUID)getArguments().getSerializable(ARG_CRIM_ID));
     }
 
     @Nullable
@@ -77,4 +80,17 @@ public class CrimeFragment extends Fragment {
 
         return view;
     }
+
+    public void returnResult(){
+        getActivity().setResult(Activity.RESULT_OK, null);
+    }
+
+    public static CrimeFragment newInstance(UUID uuid){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_CRIM_ID, uuid);
+        CrimeFragment crimeFragment = new CrimeFragment();
+        crimeFragment.setArguments(bundle);
+        return crimeFragment;
+    }
+
 }

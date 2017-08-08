@@ -14,7 +14,7 @@ import crimeintent.android.mtsmda.com.crimeintent.fragment.CrimeFragment;
 
 public class CrimeActivity extends SingleFragmentActivity {
 
-    public static final String EXTRA_CRIME_ID = "com.mtsmda.android.crime_id";
+    private static final String EXTRA_CRIME_ID = "com.mtsmda.android.crime_id";
 
     public static Intent newIntent(Context context, UUID crimeId) {
         Intent intent = new Intent(context, CrimeActivity.class);
@@ -24,7 +24,7 @@ public class CrimeActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {
-        return new CrimeFragment();
+        return CrimeFragment.newInstance((UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID));
     }
 
 
