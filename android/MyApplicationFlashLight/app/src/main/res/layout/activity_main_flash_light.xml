@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="camera.android.mtsmda.com.myapplicationflashlight.MainActivityFlashLight">
+
+    <ToggleButton
+        android:id="@+id/onOffFlashLight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOn="@string/stop"
+        android:textOff="@string/start"
+        android:text="@string/flashlight_text"/>
+
+    <Button
+        android:id="@+id/byTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/byTimer"/>
+
+    <Spinner
+        android:id="@+id/timerSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:prompt="@string/timerSpinner"/>
+
+</LinearLayout>

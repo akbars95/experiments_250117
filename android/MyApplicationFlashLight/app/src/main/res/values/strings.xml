@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">My Application Flash Light</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="flashlight_text">Turn On/Off Camera LED/Flashlight Android</string>
+    <string name="byTimer">Run By Timer</string>
+    <string name="timerSpinner">Choose time</string>
+    <string name="flashlight_started">Flashlight started</string>
+    <string name="flashlight_stopped">Flashlight stopped</string>
+    <string name="timer_seconds">second(s)</string>
+    <string name="timer_minutes">minute(s)</string>
+    <string name="timer_hours">hour(s)</string>
+</resources>

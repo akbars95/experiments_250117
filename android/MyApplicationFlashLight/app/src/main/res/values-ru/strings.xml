@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Мой фонарик</string>
+    <string name="start">Старт</string>
+    <string name="stop">Стоп</string>
+    <string name="flashlight_text">Вкл./Выкл. фонарик андроид</string>
+    <string name="byTimer">Запуск с помощью таймера</string>
+    <string name="timerSpinner">Выбрать время</string>
+    <string name="flashlight_started">Фонарик вкл</string>
+    <string name="flashlight_stopped">Фонарик выкл</string>
+    <string name="timer_seconds">секунд(ы)</string>
+    <string name="timer_minutes">минуты</string>
+    <string name="timer_hours">час(ы)</string>
+</resources>
