@@ -16,6 +16,7 @@ import java.util.List;
 
 import crimeintent.android.mtsmda.com.crimeintent.R;
 import crimeintent.android.mtsmda.com.crimeintent.activity.CrimeActivity;
+import crimeintent.android.mtsmda.com.crimeintent.activity.CrimePagerActivity;
 import crimeintent.android.mtsmda.com.crimeintent.model.Crime;
 import crimeintent.android.mtsmda.com.crimeintent.repository.CrimeLab;
 
@@ -83,7 +84,8 @@ public class CrimeListFragment extends Fragment {
         @Override
         public void onClick(View v) {
 //            Toast.makeText(getActivity(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
-            startActivityForResult(CrimeActivity.newIntent(getActivity(), mCrime.getId()), REQUEST_CRIME);
+//            startActivityForResult(CrimeActivity.newIntent(getActivity(), mCrime.getId()), REQUEST_CRIME);
+            startActivity(CrimePagerActivity.newIntent(getActivity(), mCrime.getId()));
         }
     }
 
