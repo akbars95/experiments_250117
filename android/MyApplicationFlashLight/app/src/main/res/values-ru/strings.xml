@@ -11,4 +11,6 @@
     <string name="timer_seconds">секунд(ы)</string>
     <string name="timer_minutes">минуты</string>
     <string name="timer_hours">час(ы)</string>
+    <string name="rus_language">Рус</string>
+    <string name="eng_language">Анг</string>
 </resources>

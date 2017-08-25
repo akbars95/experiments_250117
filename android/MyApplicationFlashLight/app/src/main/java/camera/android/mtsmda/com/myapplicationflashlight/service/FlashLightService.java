@@ -1,4 +1,4 @@
-package camera.android.mtsmda.com.myapplicationflashlight;
+package camera.android.mtsmda.com.myapplicationflashlight.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -8,13 +8,15 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import camera.android.mtsmda.com.myapplicationflashlight.R;
+
 /**
  * Created by dminzat on 8/18/2017.
  */
 
 public class FlashLightService extends Service {
 
-    private static final String TAG = MainActivityFlashLight.class.getCanonicalName();
+    private static final String TAG = FlashLightService.class.getCanonicalName();
 
     private Camera mCamera;
     private Camera.Parameters parameters;

@@ -10,4 +10,6 @@
     <string name="timer_seconds">second(s)</string>
     <string name="timer_minutes">minute(s)</string>
     <string name="timer_hours">hour(s)</string>
+    <string name="rus_language">Rus</string>
+    <string name="eng_language">Eng</string>
 </resources>
