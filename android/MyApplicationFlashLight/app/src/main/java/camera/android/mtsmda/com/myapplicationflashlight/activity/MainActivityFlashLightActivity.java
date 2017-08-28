@@ -1,11 +1,15 @@
 package camera.android.mtsmda.com.myapplicationflashlight.activity;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -28,12 +32,14 @@ import camera.android.mtsmda.com.myapplicationflashlight.R;
 import camera.android.mtsmda.com.myapplicationflashlight.helper.TimerName;
 import camera.android.mtsmda.com.myapplicationflashlight.service.FlashLightService;
 
-import static android.widget.AdapterView.*;
+import static android.widget.AdapterView.OnItemSelectedListener;
 
-public class MainActivityFlashLight extends AppCompatActivity implements OnItemSelectedListener {
+public class MainActivityFlashLightActivity extends AppCompatActivity implements OnItemSelectedListener {
 
-    private static final String TAG = MainActivityFlashLight.class.getCanonicalName();
+    private static final String TAG = MainActivityFlashLightActivity.class.getCanonicalName();
     private static final String LOCALE_RUS = "ru";
+    private static final Integer NOTIFICATION_START_FLASHLIGHT_ID = 0;
+    public static final String FLASHLIGHT_STATUS = "com.mtsmda.android.flashlight.status";
 
     //languageLevel
     private Button mSwitchLanguageEngButton;
@@ -47,19 +53,28 @@ public class MainActivityFlashLight extends AppCompatActivity implements OnItemS
     private Spinner mTimerSpinner;
 
     private Intent mIntentFlashLightService;
+    private NotificationManagerCompat notificationManagerCompat;
 
     private List<TimerName> mIntegersForTimeOut;
     private Locale mNewLocale;
 
     private long mMillisInFuture;
+    private boolean currentIsOnFlashLight;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        controlFlashLightStatus(outState);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_flash_light);
+        Log.i(TAG, "on create main activity");
+        Log.i(TAG, "savedInstanceState is null " + (savedInstanceState == null));
+        controlFlashLightStatus(savedInstanceState);
 
         initUI();
-        Log.i(TAG, "on create main activity");
         languageLevel();
         simpleOnOffLevel();
         timerFlashLightLevel();
@@ -133,6 +148,13 @@ public class MainActivityFlashLight extends AppCompatActivity implements OnItemS
         }
     }
 
+    private void controlFlashLightStatus(Bundle bundle){
+        if(null != bundle){
+            currentIsOnFlashLight = bundle.getBoolean(FLASHLIGHT_STATUS);
+            System.out.println("currentIsOnFlashLight on controlFlashLightStatus = " + currentIsOnFlashLight);
+        }
+    }
+
     private void setLocale(String language) {
         Log.i(TAG, "lang = " + language);
         this.mNewLocale = new Locale(language);
@@ -153,7 +175,8 @@ public class MainActivityFlashLight extends AppCompatActivity implements OnItemS
 
     //simpleOnOffLevel
     private void simpleOnOffLevel() {
-        this.mOnOffToggleButton.setChecked(false);
+        System.out.println("currentIsOnFlashLight = " + currentIsOnFlashLight);
+        this.mOnOffToggleButton.setChecked(currentIsOnFlashLight);
         this.mOnOffToggleButton.setBackgroundColor(R.color.colorGreen);
         this.mOnOffToggleButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked) {
@@ -161,11 +184,13 @@ public class MainActivityFlashLight extends AppCompatActivity implements OnItemS
                 Log.i(TAG, "start service");
                 mSwitchLanguageEngButton.setVisibility(View.INVISIBLE);
                 mSwitchLanguageRusButton.setVisibility(View.INVISIBLE);
+                addNotification();
             } else {
                 stopService(getIntentFlashLightService());
                 Log.i(TAG, "stop service");
                 mSwitchLanguageEngButton.setVisibility(View.VISIBLE);
                 mSwitchLanguageRusButton.setVisibility(View.VISIBLE);
+                notificationManagerCompat.cancel(NOTIFICATION_START_FLASHLIGHT_ID);
             }
             mByTimerButton.setEnabled(!isChecked);
             mTimerSpinner.setEnabled(!isChecked);
@@ -253,6 +278,27 @@ public class MainActivityFlashLight extends AppCompatActivity implements OnItemS
         this.mOnOffToggleButton = getUIElement(R.id.onOffFlashLight, ToggleButton.class);
         this.mTimerSpinner = getUIElement(R.id.timerSpinner, Spinner.class);
         this.mByTimerButton = getUIElement(R.id.byTimer, Button.class);
+    }
+
+    private void addNotification() {
+        Log.i(TAG, "Notification started");
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(FLASHLIGHT_STATUS, currentIsOnFlashLight);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, (int) System.currentTimeMillis(), NotificationViewActivity.newIntent(this, currentIsOnFlashLight), 0, bundle);
+        Notification notification =
+                new NotificationCompat.Builder(this)
+                        .setContentTitle("Notification")
+                        .setContentText("This is a test notification")
+                        .setSmallIcon(R.drawable.icon)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true)
+                        .addAction(R.drawable.icon, "Call", pendingIntent)
+                        .build();
+
+        notificationManagerCompat =
+                NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(NOTIFICATION_START_FLASHLIGHT_ID, notification);
     }
 
     private <T> T getUIElement(int id, Class<T> tClass) {
