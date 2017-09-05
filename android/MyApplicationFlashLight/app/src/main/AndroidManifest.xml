@@ -29,6 +29,7 @@
                 android:value=".activity.MainActivityFlashLightActivity"/>
 -->
         </activity>
+        <activity android:name=".activity.SettingActivity"></activity>
 
         <service android:name=".service.FlashLightService"/>
     </application>

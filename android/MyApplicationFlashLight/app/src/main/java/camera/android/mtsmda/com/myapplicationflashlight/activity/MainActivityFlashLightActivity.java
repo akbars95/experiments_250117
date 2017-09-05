@@ -2,6 +2,7 @@ package camera.android.mtsmda.com.myapplicationflashlight.activity;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -10,8 +11,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -23,20 +22,24 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import camera.android.mtsmda.com.myapplicationflashlight.R;
-import camera.android.mtsmda.com.myapplicationflashlight.helper.TimerName;
+import camera.android.mtsmda.com.myapplicationflashlight.common.activity.MyAppCompatActivityWithLogger;
+import camera.android.mtsmda.com.myapplicationflashlight.dao.FlashLightSettingDao;
+import camera.android.mtsmda.com.myapplicationflashlight.dao.FlashLightSettingDaoImplDB;
+import camera.android.mtsmda.com.myapplicationflashlight.db.FlashLightBaseDBHelper;
+import camera.android.mtsmda.com.myapplicationflashlight.model.FlashLightSetting;
 import camera.android.mtsmda.com.myapplicationflashlight.service.FlashLightService;
 
 import static android.widget.AdapterView.OnItemSelectedListener;
 
-public class MainActivityFlashLightActivity extends AppCompatActivity implements OnItemSelectedListener {
+public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogger implements OnItemSelectedListener {
 
-    private static final String TAG = MainActivityFlashLightActivity.class.getCanonicalName();
     private static final String LOCALE_RUS = "ru";
     private static final Integer NOTIFICATION_START_FLASHLIGHT_ID = 0;
     public static final String FLASHLIGHT_STATUS = "com.mtsmda.android.flashlight.status";
@@ -52,14 +55,18 @@ public class MainActivityFlashLightActivity extends AppCompatActivity implements
     private Button mByTimerButton;
     private Spinner mTimerSpinner;
 
+    //settingsLevel
+    private Button mSettingsButton;
+
     private Intent mIntentFlashLightService;
     private NotificationManagerCompat notificationManagerCompat;
 
-    private List<TimerName> mIntegersForTimeOut;
     private Locale mNewLocale;
 
     private long mMillisInFuture;
     private boolean currentIsOnFlashLight;
+    private FlashLightSettingDao mFlashLightSettingDao;
+    private List<FlashLightSetting> allFlashLightSettings;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -68,25 +75,27 @@ public class MainActivityFlashLightActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        w("layout id is = " + this.layoutId);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_flash_light);
-        Log.i(TAG, "on create main activity");
-        Log.i(TAG, "savedInstanceState is null " + (savedInstanceState == null));
+        this.mFlashLightSettingDao = new FlashLightSettingDaoImplDB(this);
+        w("this.mFlashLightSettingDao = " + (null == this.mFlashLightSettingDao));
+        w("on create main activity");
+        w("savedInstanceState is null " + (savedInstanceState == null));
         controlFlashLightStatus(savedInstanceState);
 
-        initUI();
+        insertToDB();
         languageLevel();
         simpleOnOffLevel();
         timerFlashLightLevel();
         defineCurrentLanguage();
+        settingsLevel();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.i(TAG, "selected position - " + position + ", id is " + id);
-        Toast.makeText(parent.getContext(), "Click - " + parent.getItemIdAtPosition(position), Toast.LENGTH_SHORT).show();
-        this.mMillisInFuture = mIntegersForTimeOut.get(position).getSeconds();
-        Log.i(TAG, "this.mMillisInFuture = " + this.mMillisInFuture);
+        w("selected position - " + position + ", id is " + id);
+        this.mMillisInFuture = TimeUnit.SECONDS.toMillis(allFlashLightSettings.get(position).getSeconds());
+        w("this.mMillisInFuture = " + this.mMillisInFuture);
     }
 
     @Override
@@ -96,11 +105,33 @@ public class MainActivityFlashLightActivity extends AppCompatActivity implements
 
     public Intent getIntentFlashLightService() {
         if (null == this.mIntentFlashLightService) {
-            Log.i(TAG, "mIntentFlashLightService is null");
+            w("mIntentFlashLightService is null");
             this.mIntentFlashLightService = new Intent(getBaseContext(), FlashLightService.class);
         }
-        Log.i(TAG, "mIntentFlashLightService return");
+        w("mIntentFlashLightService return");
         return this.mIntentFlashLightService;
+    }
+
+    public static Intent getIntent(Context context){
+        return new Intent(context, MainActivityFlashLightActivity.class);
+    }
+
+    private void insertToDB() {
+        w("FlashLightBaseDBHelper.onCreateRan " + FlashLightBaseDBHelper.isRunOnCreate());
+        if (FlashLightBaseDBHelper.isRunOnCreate()) {
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 0, 10));
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 0, 20));
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 0, 30));
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 0, 45));
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 1, 0));
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 2, 0));
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 3, 0));
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 5, 0));
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 10, 0));
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 30, 0));
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(1, 0, 0));
+            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(1, 0, 5));
+        }
     }
 
     //languageLevel
@@ -119,22 +150,23 @@ public class MainActivityFlashLightActivity extends AppCompatActivity implements
                 }
                 break;
                 default: {
-                    Log.i(TAG, "ERROR! cannot define which button clicked, id = " + v.getId());
+                    w("ERROR! cannot define which button clicked, id = " + v.getId());
                 }
                 break;
             }
-            Log.i(TAG, "mSwitchLanguageEngButton = " + mSwitchLanguageEngButton.isEnabled());
-            Log.i(TAG, "mSwitchLanguageRusButton = " + mSwitchLanguageRusButton.isEnabled());
-            Log.i(TAG, message);
+            w("mSwitchLanguageEngButton = " + mSwitchLanguageEngButton.isEnabled());
+            w("mSwitchLanguageRusButton = " + mSwitchLanguageRusButton.isEnabled());
+            w(message);
             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
         };
+        w("Is Null = " + (null == this.mSwitchLanguageEngButton));
         this.mSwitchLanguageEngButton.setOnClickListener(onClickListener);
         this.mSwitchLanguageRusButton.setOnClickListener(onClickListener);
     }
 
     private void defineCurrentLanguage() {
         String language = Locale.getDefault().getLanguage();
-        Log.i(TAG, "current language = " + language);
+        w("current language = " + language);
         if (language.equals(LOCALE_RUS)) {
             mSwitchLanguageEngButton.setClickable(true);
             mSwitchLanguageEngButton.setBackgroundColor(Color.GREEN);
@@ -148,20 +180,21 @@ public class MainActivityFlashLightActivity extends AppCompatActivity implements
         }
     }
 
-    private void controlFlashLightStatus(Bundle bundle){
-        if(null != bundle){
+    private void controlFlashLightStatus(Bundle bundle) {
+        w("null != bundle - " + (null != bundle));
+        if (null != bundle) {
             currentIsOnFlashLight = bundle.getBoolean(FLASHLIGHT_STATUS);
-            System.out.println("currentIsOnFlashLight on controlFlashLightStatus = " + currentIsOnFlashLight);
+            w("currentIsOnFlashLight on controlFlashLightStatus = " + currentIsOnFlashLight);
         }
     }
 
     private void setLocale(String language) {
-        Log.i(TAG, "lang = " + language);
+        w("lang = " + language);
         this.mNewLocale = new Locale(language);
-        Log.i(TAG, "def lang = " + Locale.getDefault().getLanguage());
+        w("def lang = " + Locale.getDefault().getLanguage());
         Locale.setDefault(this.mNewLocale);
         Configuration configuration = new Configuration();
-        Log.i(TAG, "android current version = " + Build.VERSION.SDK_INT);
+        w("android current version = " + Build.VERSION.SDK_INT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             configuration.setLocale(this.mNewLocale);
         } else {
@@ -169,32 +202,31 @@ public class MainActivityFlashLightActivity extends AppCompatActivity implements
         }
         getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
         recreate();
-        Log.i(TAG, "Language changed");
-        Log.i(TAG, "after changed def lang = " + Locale.getDefault().getLanguage());
+        w("Language changed");
+        w("after changed def lang = " + Locale.getDefault().getLanguage());
     }
 
     //simpleOnOffLevel
     private void simpleOnOffLevel() {
-        System.out.println("currentIsOnFlashLight = " + currentIsOnFlashLight);
+        w("currentIsOnFlashLight = " + currentIsOnFlashLight);
         this.mOnOffToggleButton.setChecked(currentIsOnFlashLight);
         this.mOnOffToggleButton.setBackgroundColor(R.color.colorGreen);
         this.mOnOffToggleButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked) {
                 startService(getIntentFlashLightService());
-                Log.i(TAG, "start service");
+                w("start service");
                 mSwitchLanguageEngButton.setVisibility(View.INVISIBLE);
                 mSwitchLanguageRusButton.setVisibility(View.INVISIBLE);
                 addNotification();
             } else {
                 stopService(getIntentFlashLightService());
-                Log.i(TAG, "stop service");
+                w("stop service");
                 mSwitchLanguageEngButton.setVisibility(View.VISIBLE);
                 mSwitchLanguageRusButton.setVisibility(View.VISIBLE);
                 notificationManagerCompat.cancel(NOTIFICATION_START_FLASHLIGHT_ID);
             }
             mByTimerButton.setEnabled(!isChecked);
             mTimerSpinner.setEnabled(!isChecked);
-
         });
     }
 
@@ -202,48 +234,50 @@ public class MainActivityFlashLightActivity extends AppCompatActivity implements
     public void timerFlashLightLevel() {
         this.mByTimerButton.setOnClickListener(v -> {
             getCountDownTimer().start();
-            Log.i(TAG, "started timer flashlight");
+            w("started timer flashlight");
         });
 
         this.mTimerSpinner.setOnItemSelectedListener(this);
-        mIntegersForTimeOut = new ArrayList<TimerName>() {{
-            add(new TimerName("10 " + getString(R.string.timer_seconds), TimeUnit.SECONDS.toMillis(10)));
-            add(new TimerName("20 " + getString(R.string.timer_seconds), TimeUnit.SECONDS.toMillis(20)));
-            add(new TimerName("30 " + getString(R.string.timer_seconds), TimeUnit.SECONDS.toMillis(30)));
-            add(new TimerName("45 " + getString(R.string.timer_seconds), TimeUnit.SECONDS.toMillis(45)));
-            add(new TimerName("1 " + getString(R.string.timer_minutes), TimeUnit.MINUTES.toMillis(1)));
-            add(new TimerName("3 " + getString(R.string.timer_minutes), TimeUnit.MINUTES.toMillis(3)));
-            add(new TimerName("5 " + getString(R.string.timer_minutes), TimeUnit.MINUTES.toMillis(5)));
-            add(new TimerName("10 " + getString(R.string.timer_minutes), TimeUnit.MINUTES.toMillis(10)));
-            add(new TimerName("30 " + getString(R.string.timer_minutes), TimeUnit.MINUTES.toMillis(30)));
-            add(new TimerName("1 " + getString(R.string.timer_hours), TimeUnit.HOURS.toMillis(1)));
-        }};
-
-        this.mMillisInFuture = mIntegersForTimeOut.get(0).getSeconds();
-        Log.i(TAG, "mMillisInFuture = " + mMillisInFuture);
+        this.allFlashLightSettings = this.mFlashLightSettingDao.getAllFlashLightSettings();
+        w("null == allFlashLightSettings - " + (null == this.allFlashLightSettings));
+        w("allFlashLightSettings.size() - " + (this.allFlashLightSettings.size()));
+        this.mMillisInFuture = TimeUnit.SECONDS.toMillis(this.allFlashLightSettings.get(0).getSeconds());
+        w("allFlashLightSettings.get(0).getTimerName().getSeconds() - " + (this.allFlashLightSettings.get(0).getTimerName(getString(R.string.timer_hours), getString(R.string.timer_minutes),
+                getString(R.string.timer_seconds))));
+        w("mMillisInFuture = " + mMillisInFuture);
 
         ArrayAdapter<String> timerNameArrayAdapter;
-        Log.i(TAG, "current build version is " + Build.VERSION.SDK_INT);
+        w("current build version is " + Build.VERSION.SDK_INT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            timerNameArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mIntegersForTimeOut.stream().map(integersForTimeOutL -> integersForTimeOutL.getName()).collect(Collectors.toList()));
-            Log.i(TAG, "more or equal 24 api level");
+            timerNameArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, this.allFlashLightSettings.stream()
+                    .map(integersForTimeOutL -> integersForTimeOutL.getTimerName(getString(R.string.timer_hours), getString(R.string.timer_minutes), getString(R.string.timer_seconds))).collect(Collectors.toList()));
+            w("more or equal 24 api level");
         } else {
-            timerNameArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, TimerName.getStringNames(mIntegersForTimeOut));
-            Log.i(TAG, "less than 24 api level");
+            List<String> stringNames = new ArrayList<>();
+            for (FlashLightSetting flashLightSetting : this.allFlashLightSettings) {
+                stringNames.add(flashLightSetting.getTimerName(getString(R.string.timer_hours), getString(R.string.timer_minutes), getString(R.string.timer_seconds)));
+            }
+            for (String s : stringNames) {
+                w(s + " = s");
+            }
+            timerNameArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, stringNames);
+            w("less than 24 api level");
         }
 
         timerNameArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        w("timerNameArrayAdapter is null " + (timerNameArrayAdapter == null));
         this.mTimerSpinner.setAdapter(timerNameArrayAdapter);
 
-        Log.i(TAG, "current local is " + getApplicationContext().getResources().getDisplayMetrics());
+        w("current local is " + getApplicationContext().getResources().getDisplayMetrics());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Log.i(TAG, "current local is " + getApplicationContext().getResources().getConfiguration().getLocales().get(0).getCountry());
+            w("current local is " + getApplicationContext().getResources().getConfiguration().getLocales().get(0).getCountry());
         }
     }
 
     private CountDownTimer getCountDownTimer() {
         return new CountDownTimer(this.mMillisInFuture, 1L) {
-            int count = 0;
+            private int count = 0;
+            private GregorianCalendar mStartGregorianCalendar;
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -254,34 +288,47 @@ public class MainActivityFlashLightActivity extends AppCompatActivity implements
                     mTimerSpinner.setEnabled(false);
                     mSwitchLanguageEngButton.setVisibility(View.INVISIBLE);
                     mSwitchLanguageRusButton.setVisibility(View.INVISIBLE);
+                    mStartGregorianCalendar = new GregorianCalendar();
                 }
-                Log.i(TAG, "tick " + ++count);
-                Log.i(TAG, "millis Until Finished = " + millisUntilFinished);
+                w("tick " + ++count);
+                w("millis Until Finished = " + millisUntilFinished);
             }
 
             @Override
             public void onFinish() {
-                Log.i(TAG, "finish timer");
+                w("finish timer");
                 stopService(getIntentFlashLightService());
                 mOnOffToggleButton.setEnabled(true);
                 mByTimerButton.setEnabled(true);
                 mTimerSpinner.setEnabled(true);
                 mSwitchLanguageEngButton.setVisibility(View.VISIBLE);
                 mSwitchLanguageRusButton.setVisibility(View.VISIBLE);
+                w("start is " + mStartGregorianCalendar.toString());
+                w("stop is " + new GregorianCalendar().toString());
             }
         };
     }
 
-    private void initUI() {
-        this.mSwitchLanguageEngButton = getUIElement(R.id.switchLanguageEng, Button.class);
-        this.mSwitchLanguageRusButton = getUIElement(R.id.switchLanguageRus, Button.class);
-        this.mOnOffToggleButton = getUIElement(R.id.onOffFlashLight, ToggleButton.class);
-        this.mTimerSpinner = getUIElement(R.id.timerSpinner, Spinner.class);
-        this.mByTimerButton = getUIElement(R.id.byTimer, Button.class);
+    @Override
+    public void initUI(View ... views) {
+        this.mSwitchLanguageEngButton = getUIElementButton(R.id.switchLanguageEng);
+        this.mSwitchLanguageRusButton = getUIElementButton(R.id.switchLanguageRus);
+        this.mOnOffToggleButton = getUIElementToggleButton(R.id.onOffFlashLight);
+        this.mTimerSpinner = getUIElementSpinner(R.id.timerSpinner);
+        this.mByTimerButton = getUIElementButton(R.id.byTimer);
+        this.mSettingsButton = getUIElementButton(R.id.goToSettings);
+        w("this.mSettingsButton is null " + (null == this.mSettingsButton));
+        w("Initialled UI");
+    }
+
+    @Override
+    public void setLayoutId() {
+        this.layoutId = R.layout.activity_main_flash_light;
+        w("layout id is setLayoutId = " + this.layoutId);
     }
 
     private void addNotification() {
-        Log.i(TAG, "Notification started");
+        w("Notification started");
         Bundle bundle = new Bundle();
         bundle.putBoolean(FLASHLIGHT_STATUS, currentIsOnFlashLight);
         PendingIntent pendingIntent =
@@ -301,8 +348,12 @@ public class MainActivityFlashLightActivity extends AppCompatActivity implements
         notificationManagerCompat.notify(NOTIFICATION_START_FLASHLIGHT_ID, notification);
     }
 
-    private <T> T getUIElement(int id, Class<T> tClass) {
-        return (T) findViewById(id);
+    private void settingsLevel() {
+        w("settings level begin");
+        this.mSettingsButton.setOnClickListener(v -> {
+            w("Go to the settings activity");
+             startActivity(SettingActivity.createIntentSettingActivity(getApplicationContext()));
+        });
     }
 
 }

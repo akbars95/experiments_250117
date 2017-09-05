@@ -13,4 +13,7 @@
     <string name="timer_hours">час(ы)</string>
     <string name="rus_language">Рус</string>
     <string name="eng_language">Анг</string>
+    <string name="notification_text">Фонарик включен</string>
+    <string name="setting_button_text">Настройки</string>
+    <string name="settings_goBack">Назад</string>
 </resources>

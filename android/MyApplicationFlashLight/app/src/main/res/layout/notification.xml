@@ -8,6 +8,6 @@
         android:id="@+id/textViewForNotification"
         android:layout_width="wrap_content"
         android:layout_height="400dp"
-        android:text="Hi, this is notification!"/>
+        android:text="@string/notification_text"/>
 
 </LinearLayout>

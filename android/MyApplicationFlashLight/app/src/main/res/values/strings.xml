@@ -12,4 +12,8 @@
     <string name="timer_hours">hour(s)</string>
     <string name="rus_language">Rus</string>
     <string name="eng_language">Eng</string>
+
+    <string name="notification_text">FlashLight is run</string>
+    <string name="setting_button_text">Settings</string>
+    <string name="settings_goBack">Go Back</string>
 </resources>
