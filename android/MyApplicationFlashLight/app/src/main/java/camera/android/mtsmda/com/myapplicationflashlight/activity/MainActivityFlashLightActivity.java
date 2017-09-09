@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 import camera.android.mtsmda.com.myapplicationflashlight.R;
 import camera.android.mtsmda.com.myapplicationflashlight.common.activity.MyAppCompatActivityWithLogger;
-import camera.android.mtsmda.com.myapplicationflashlight.dao.FlashLightSettingDao;
 import camera.android.mtsmda.com.myapplicationflashlight.dao.FlashLightSettingDaoImplDB;
 import camera.android.mtsmda.com.myapplicationflashlight.db.FlashLightBaseDBHelper;
 import camera.android.mtsmda.com.myapplicationflashlight.model.FlashLightSetting;
@@ -50,6 +49,7 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
 
     //simpleOnOffLevel
     private ToggleButton mOnOffToggleButton;
+    private Button mRunSOSButton;
 
     //timerFlashLightLevel
     private Button mByTimerButton;
@@ -65,8 +65,9 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
 
     private long mMillisInFuture;
     private boolean currentIsOnFlashLight;
-    private FlashLightSettingDao mFlashLightSettingDao;
+    private boolean sosRun;
     private List<FlashLightSetting> allFlashLightSettings;
+    private ThreadForSosButton threadForSosButton;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -77,11 +78,13 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
     protected void onCreate(Bundle savedInstanceState) {
         w("layout id is = " + this.layoutId);
         super.onCreate(savedInstanceState);
-        this.mFlashLightSettingDao = new FlashLightSettingDaoImplDB(this);
-        w("this.mFlashLightSettingDao = " + (null == this.mFlashLightSettingDao));
         w("on create main activity");
         w("savedInstanceState is null " + (savedInstanceState == null));
         controlFlashLightStatus(savedInstanceState);
+
+        this.threadForSosButton = new ThreadForSosButton();
+        this.threadForSosButton.start();
+        w("started thread for sos button");
 
         insertToDB();
         languageLevel();
@@ -89,6 +92,13 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
         timerFlashLightLevel();
         defineCurrentLanguage();
         settingsLevel();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.threadForSosButton.suspend();
+        this.threadForSosButton = null;
     }
 
     @Override
@@ -112,25 +122,25 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
         return this.mIntentFlashLightService;
     }
 
-    public static Intent getIntent(Context context){
+    public static Intent getIntent(Context context) {
         return new Intent(context, MainActivityFlashLightActivity.class);
     }
 
     private void insertToDB() {
         w("FlashLightBaseDBHelper.onCreateRan " + FlashLightBaseDBHelper.isRunOnCreate());
         if (FlashLightBaseDBHelper.isRunOnCreate()) {
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 0, 10));
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 0, 20));
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 0, 30));
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 0, 45));
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 1, 0));
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 2, 0));
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 3, 0));
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 5, 0));
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 10, 0));
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(0, 30, 0));
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(1, 0, 0));
-            mFlashLightSettingDao.insertFlashLightSetting(new FlashLightSetting(1, 0, 5));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(0, 0, 10));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(0, 0, 20));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(0, 0, 30));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(0, 0, 45));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(0, 1, 0));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(0, 2, 0));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(0, 3, 0));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(0, 5, 0));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(0, 10, 0));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(0, 30, 0));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(1, 0, 0));
+            FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).insertFlashLightSetting(new FlashLightSetting(1, 0, 5));
         }
     }
 
@@ -227,7 +237,39 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
             }
             mByTimerButton.setEnabled(!isChecked);
             mTimerSpinner.setEnabled(!isChecked);
+            mOnOffToggleButton.setClickable(false);
+            w("mOnOffToggleButton.setClickable(false);");
+            try {
+                w("sleep to 900 sm");
+                Thread.sleep(900);
+                w("wake up after 900 ms sleeping");
+            } catch (InterruptedException e) {
+                w("sleep exception", e);
+            }
+            mOnOffToggleButton.setClickable(true);
+            w("mOnOffToggleButton.setClickable(true);");
         });
+
+        managementSosButtonState();
+        w("init sos button state");
+        this.mRunSOSButton.setOnClickListener(v -> {
+            managementSosButtonState();
+            w("onclick to sos button");
+        });
+
+    }
+
+    private void managementSosButtonState() {
+        if (sosRun) {
+            mRunSOSButton.setText(getString(R.string.disableSos));
+            threadForSosButton.resume();
+            w("resume");
+        } else {
+            mRunSOSButton.setText(getString(R.string.runSos));
+            threadForSosButton.suspend();
+            w("suspend");
+        }
+        sosRun = !sosRun;
     }
 
     //timerFlashLightLevel
@@ -238,7 +280,7 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
         });
 
         this.mTimerSpinner.setOnItemSelectedListener(this);
-        this.allFlashLightSettings = this.mFlashLightSettingDao.getAllFlashLightSettings();
+        this.allFlashLightSettings = FlashLightSettingDaoImplDB.getInstance(getApplicationContext()).getAllFlashLightSettings();
         w("null == allFlashLightSettings - " + (null == this.allFlashLightSettings));
         w("allFlashLightSettings.size() - " + (this.allFlashLightSettings.size()));
         this.mMillisInFuture = TimeUnit.SECONDS.toMillis(this.allFlashLightSettings.get(0).getSeconds());
@@ -310,10 +352,11 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
     }
 
     @Override
-    public void initUI(View ... views) {
+    public void initUI(View... views) {
         this.mSwitchLanguageEngButton = getUIElementButton(R.id.switchLanguageEng);
         this.mSwitchLanguageRusButton = getUIElementButton(R.id.switchLanguageRus);
         this.mOnOffToggleButton = getUIElementToggleButton(R.id.onOffFlashLight);
+        this.mRunSOSButton = getUIElementButton(R.id.runSos);
         this.mTimerSpinner = getUIElementSpinner(R.id.timerSpinner);
         this.mByTimerButton = getUIElementButton(R.id.byTimer);
         this.mSettingsButton = getUIElementButton(R.id.goToSettings);
@@ -352,8 +395,58 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
         w("settings level begin");
         this.mSettingsButton.setOnClickListener(v -> {
             w("Go to the settings activity");
-             startActivity(SettingActivity.createIntentSettingActivity(getApplicationContext()));
+            startActivity(SettingActivity.createIntentSettingActivity(getApplicationContext()));
         });
+    }
+
+    private class ThreadForSosButton implements Runnable {
+        private Thread mThread;
+        private boolean suspended;
+
+        @Override
+        public void run() {
+            try {
+                for (int i = 0; i < 1_000_000_000; i++) {
+                    w("suspended = " + suspended);
+                    synchronized (this) {
+                        while (!suspended) {
+                            w("thread waiting");
+                            wait();
+                        }
+                    }
+
+                    w("for i = " + i);
+                    Thread.sleep(500);
+                    startService(getIntentFlashLightService());
+                    Thread.sleep(500);
+                    stopService(getIntentFlashLightService());
+                    w("Run run");
+                }
+                w("Stop run!");
+            } catch (InterruptedException e) {
+                w("interrupt on run method", e);
+            }
+
+        }
+
+        public void start() {
+            w("start thread method");
+            if (null == mThread) {
+                this.mThread = new Thread(this, "sos button thread");
+                this.mThread.start();
+                w("thread started");
+            }
+        }
+
+        public void suspend() {
+            suspended = false;
+        }
+
+        public synchronized void resume() {
+            suspended = true;
+            notify();
+        }
+
     }
 
 }

@@ -16,4 +16,9 @@
     <string name="notification_text">Фонарик включен</string>
     <string name="setting_button_text">Настройки</string>
     <string name="settings_goBack">Назад</string>
+    <string name="runSos">Вкл Сос</string>
+    <string name="disableSos">Выкл Сос</string>
+    <string name="spinner_button_fragment_error_more">Не может быть больше %d</string>
+    <string name="spinner_button_fragment_error_less">Не может быть меньше %d</string>
+    <string name="setting_add_button_text">Добавить</string>
 </resources>

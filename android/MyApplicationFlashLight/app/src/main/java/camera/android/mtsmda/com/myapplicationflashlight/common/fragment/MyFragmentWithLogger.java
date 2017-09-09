@@ -1,11 +1,5 @@
 package camera.android.mtsmda.com.myapplicationflashlight.common.fragment;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import camera.android.mtsmda.com.myapplicationflashlight.common.Initialize;
 import camera.android.mtsmda.com.myapplicationflashlight.log.L;
 import camera.android.mtsmda.com.myapplicationflashlight.log.LogAble;
@@ -17,6 +11,10 @@ import camera.android.mtsmda.com.myapplicationflashlight.log.LogAble;
 public abstract class MyFragmentWithLogger extends MyFragment implements LogAble, Initialize {
 
     private L l;
+
+    public MyFragmentWithLogger() {
+        this.l = new L(this);
+    }
 
     @Override
     public void d(String message, Throwable throwable) {
@@ -35,6 +33,6 @@ public abstract class MyFragmentWithLogger extends MyFragment implements LogAble
 
     @Override
     public void w(String message) {
-        this.w(message);
+        this.w(message, null);
     }
 }

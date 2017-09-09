@@ -16,4 +16,9 @@
     <string name="notification_text">FlashLight is run</string>
     <string name="setting_button_text">Settings</string>
     <string name="settings_goBack">Go Back</string>
+    <string name="runSos">Run SOS</string>
+    <string name="disableSos">Disable SOS</string>
+    <string name="spinner_button_fragment_error_more">Cannot be more then %d</string>
+    <string name="spinner_button_fragment_error_less">Cannot be less then %d</string>
+    <string name="setting_add_button_text">Add new</string>
 </resources>

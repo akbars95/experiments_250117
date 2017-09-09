@@ -3,6 +3,7 @@ package camera.android.mtsmda.com.myapplicationflashlight.common.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -48,6 +49,11 @@ public abstract class MyAppCompatActivity extends AppCompatActivity implements E
     @Override
     public EditText getUIElementEditText(int id) {
         return getUIElement(id, EditText.class);
+    }
+
+    @Override
+    public LinearLayoutCompat getUIElementLinearLayoutCompat(int id) {
+        return getUIElement(id, LinearLayoutCompat.class);
     }
 
     @Override

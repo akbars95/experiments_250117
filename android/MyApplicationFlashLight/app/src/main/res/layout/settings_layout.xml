@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <LinearLayout
         android:id="@+id/backLevel"
         android:layout_width="wrap_content"
         android:layout_height="125px">
@@ -15,12 +15,73 @@
             android:layout_height="match_parent"
             android:text="@string/settings_goBack"/>
 
-    </android.support.v7.widget.LinearLayoutCompat>
+    </LinearLayout>
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <LinearLayout
+        android:id="@+id/setNewTimerLevel"
         android:layout_width="wrap_content"
-        android:layout_height="250px">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    </android.support.v7.widget.LinearLayoutCompat>
+        <!--<fragment
+            android:id="@+id/spinnerHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:name="camera.android.mtsmda.com.myapplicationflashlight.fragment.SpinnerFragment">
+        </fragment>
+
+        <fragment
+            android:id="@+id/spinnerMinutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:name="camera.android.mtsmda.com.myapplicationflashlight.fragment.SpinnerFragment">
+        </fragment>
+
+        <fragment
+            android:id="@+id/spinnerSeconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:name="camera.android.mtsmda.com.myapplicationflashlight.fragment.SpinnerFragment">
+        </fragment>-->
+
+        <LinearLayout
+            android:id="@+id/layoutSpinnerHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:orientation="vertical">
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutSpinnerMinutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:orientation="vertical">
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutSpinnerSeconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:orientation="vertical">
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/addButtonLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/addNewValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_add_button_text"/>
+    </LinearLayout>
 
 </LinearLayout>

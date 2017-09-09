@@ -41,6 +41,11 @@
             android:text="@string/flashlight_text"
             android:textOff="@string/start"
             android:textOn="@string/stop"/>
+
+        <Button
+            android:id="@+id/runSos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout

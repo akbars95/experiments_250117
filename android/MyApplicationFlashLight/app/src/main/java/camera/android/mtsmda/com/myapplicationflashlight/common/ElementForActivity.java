@@ -1,5 +1,6 @@
 package camera.android.mtsmda.com.myapplicationflashlight.common;
 
+import android.support.v7.widget.LinearLayoutCompat;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -18,5 +19,6 @@ public interface ElementForActivity {
     TextView getUIElementTextView(int id);
     Spinner getUIElementSpinner(int id);
     EditText getUIElementEditText(int id);
+    LinearLayoutCompat getUIElementLinearLayoutCompat(int id);
 
 }

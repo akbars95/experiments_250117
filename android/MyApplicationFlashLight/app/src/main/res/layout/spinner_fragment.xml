@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:id="@+id/spinnerFragment"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
+              android:layout_width="75dp"
               android:layout_height="match_parent"
+              android:orientation="vertical"
               android:weightSum="1">
 
     <Button
         android:id="@+id/plusButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@android:color/holo_green_dark"
         android:text="+"/>
 
     <EditText
         android:id="@+id/changeValue"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
+        android:background="@color/colorPrimary"
         android:ems="10"
-        android:inputType="number"/>
+        android:inputType="number"
+        android:paddingTop="10dp"
+        android:textAlignment="center"
+        android:textColor="@android:color/background_light"/>
 
     <Button
         android:id="@+id/minusButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@color/colorRed"
         android:text="-"/>
 
 </LinearLayout>

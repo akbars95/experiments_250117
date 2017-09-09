@@ -23,9 +23,18 @@ public class FlashLightSettingDaoImplDB extends FlashLightSettingDaoAdapter {
 
     private SQLiteDatabase mSQLiteDatabase;
 
-    public FlashLightSettingDaoImplDB(Context context) {
+    private static FlashLightSettingDaoImplDB mFlashLightSettingDaoImplDB;
+
+    private FlashLightSettingDaoImplDB(Context context) {
         super(context);
         this.mSQLiteDatabase = new FlashLightBaseDBHelper(mContext, this).getWritableDatabase();
+    }
+
+    public static FlashLightSettingDaoImplDB getInstance(Context context){
+        if(null == mFlashLightSettingDaoImplDB){
+            mFlashLightSettingDaoImplDB = new FlashLightSettingDaoImplDB(context);
+        }
+        return mFlashLightSettingDaoImplDB;
     }
 
     @Override
