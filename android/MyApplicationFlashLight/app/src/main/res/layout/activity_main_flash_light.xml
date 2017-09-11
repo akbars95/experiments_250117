@@ -19,13 +19,19 @@
             android:id="@+id/switchLanguageEng"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/eng_language"/>
+            android:text="@string/eng_language"
+            android:fontFamily="sans-serif"
+            android:layout_weight="0.25"
+            android:textStyle="bold"/>
 
         <Button
             android:id="@+id/switchLanguageRus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/rus_language"/>
+            android:fontFamily="sans-serif"
+            android:layout_weight="0.25"
+            android:text="@string/rus_language"
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <LinearLayout

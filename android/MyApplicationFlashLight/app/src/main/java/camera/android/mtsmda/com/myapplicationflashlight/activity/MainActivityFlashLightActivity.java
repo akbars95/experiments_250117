@@ -180,13 +180,17 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
         if (language.equals(LOCALE_RUS)) {
             mSwitchLanguageEngButton.setClickable(true);
             mSwitchLanguageEngButton.setBackgroundColor(Color.GREEN);
+            mSwitchLanguageEngButton.setTextColor(Color.RED);
             mSwitchLanguageRusButton.setClickable(false);
             mSwitchLanguageRusButton.setBackgroundColor(Color.RED);
+            mSwitchLanguageRusButton.setTextColor(Color.GREEN);
         } else {
             mSwitchLanguageEngButton.setClickable(false);
             mSwitchLanguageEngButton.setBackgroundColor(Color.RED);
+            mSwitchLanguageEngButton.setTextColor(Color.GREEN);
             mSwitchLanguageRusButton.setClickable(true);
             mSwitchLanguageRusButton.setBackgroundColor(Color.GREEN);
+            mSwitchLanguageRusButton.setTextColor(Color.RED);
         }
     }
 
