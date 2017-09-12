@@ -16,10 +16,8 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -48,7 +46,7 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
     private Button mSwitchLanguageRusButton;
 
     //simpleOnOffLevel
-    private ToggleButton mOnOffToggleButton;
+    private Button mOnOffFlashLightButton;
     private Button mRunSOSButton;
 
     //timerFlashLightLevel
@@ -223,10 +221,10 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
     //simpleOnOffLevel
     private void simpleOnOffLevel() {
         w("currentIsOnFlashLight = " + currentIsOnFlashLight);
-        this.mOnOffToggleButton.setChecked(currentIsOnFlashLight);
-        this.mOnOffToggleButton.setBackgroundColor(R.color.colorGreen);
-        this.mOnOffToggleButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked) {
+        this.mOnOffFlashLightButton.setText(currentIsOnFlashLight ? R.string.stop : R.string.start);
+        this.mOnOffFlashLightButton.setOnClickListener(v -> {
+            w("currentIsOnFlashLight = " + currentIsOnFlashLight);
+            if (currentIsOnFlashLight) {
                 startService(getIntentFlashLightService());
                 w("start service");
                 mSwitchLanguageEngButton.setVisibility(View.INVISIBLE);
@@ -237,12 +235,16 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
                 w("stop service");
                 mSwitchLanguageEngButton.setVisibility(View.VISIBLE);
                 mSwitchLanguageRusButton.setVisibility(View.VISIBLE);
-                notificationManagerCompat.cancel(NOTIFICATION_START_FLASHLIGHT_ID);
+                if(null != notificationManagerCompat){
+                    notificationManagerCompat.cancel(NOTIFICATION_START_FLASHLIGHT_ID);
+                }
             }
-            mByTimerButton.setEnabled(!isChecked);
-            mTimerSpinner.setEnabled(!isChecked);
-            mOnOffToggleButton.setClickable(false);
-            w("mOnOffToggleButton.setClickable(false);");
+            mByTimerButton.setEnabled(!currentIsOnFlashLight);
+            mTimerSpinner.setEnabled(!currentIsOnFlashLight);
+            mOnOffFlashLightButton.setText(currentIsOnFlashLight ? R.string.stop : R.string.start);
+            currentIsOnFlashLight = !currentIsOnFlashLight;
+            mOnOffFlashLightButton.setClickable(false);
+            w("mOnOffFlashLightButton.setClickable(false);");
             try {
                 w("sleep to 900 sm");
                 Thread.sleep(900);
@@ -250,8 +252,8 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
             } catch (InterruptedException e) {
                 w("sleep exception", e);
             }
-            mOnOffToggleButton.setClickable(true);
-            w("mOnOffToggleButton.setClickable(true);");
+            mOnOffFlashLightButton.setClickable(true);
+            w("mOnOffFlashLightButton.setClickable(true);");
         });
 
         managementSosButtonState();
@@ -329,7 +331,7 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
             public void onTick(long millisUntilFinished) {
                 if (count == 0) {
                     startService(getIntentFlashLightService());
-                    mOnOffToggleButton.setEnabled(false);
+                    mOnOffFlashLightButton.setEnabled(false);
                     mByTimerButton.setEnabled(false);
                     mTimerSpinner.setEnabled(false);
                     mSwitchLanguageEngButton.setVisibility(View.INVISIBLE);
@@ -344,7 +346,7 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
             public void onFinish() {
                 w("finish timer");
                 stopService(getIntentFlashLightService());
-                mOnOffToggleButton.setEnabled(true);
+                mOnOffFlashLightButton.setEnabled(true);
                 mByTimerButton.setEnabled(true);
                 mTimerSpinner.setEnabled(true);
                 mSwitchLanguageEngButton.setVisibility(View.VISIBLE);
@@ -359,7 +361,7 @@ public class MainActivityFlashLightActivity extends MyAppCompatActivityWithLogge
     public void initUI(View... views) {
         this.mSwitchLanguageEngButton = getUIElementButton(R.id.switchLanguageEng);
         this.mSwitchLanguageRusButton = getUIElementButton(R.id.switchLanguageRus);
-        this.mOnOffToggleButton = getUIElementToggleButton(R.id.onOffFlashLight);
+        this.mOnOffFlashLightButton = getUIElementButton(R.id.onOffFlashLight);
         this.mRunSOSButton = getUIElementButton(R.id.runSos);
         this.mTimerSpinner = getUIElementSpinner(R.id.timerSpinner);
         this.mByTimerButton = getUIElementButton(R.id.byTimer);

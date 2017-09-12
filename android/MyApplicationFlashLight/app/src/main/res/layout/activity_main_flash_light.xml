@@ -37,21 +37,19 @@
     <LinearLayout
         android:id="@+id/simpleOnOffLevel"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="50dp"
         android:orientation="horizontal">
 
-        <ToggleButton
+        <Button
             android:id="@+id/onOffFlashLight"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/flashlight_text"
-            android:textOff="@string/start"
-            android:textOn="@string/stop"/>
-
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"/>
         <Button
             android:id="@+id/runSos"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"/>
     </LinearLayout>
 
     <LinearLayout
